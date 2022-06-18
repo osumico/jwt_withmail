@@ -1,7 +1,10 @@
 const UserModel = require("../models/User");
 const bcrypt = require("bcryptjs");
 const uuid = require("uuid");
-const mail = require("./Mail");
+const MainServ = require("./Mail");
+const TokenServ = require("./Token");
+const UserDTO = require("../dtos/User");
+
 
 class User {
     async registration(email, password) {
@@ -10,13 +13,24 @@ class User {
             throw new Error(`User with ${ email } -- is exist!`);
         }
 
-        const hashPass = await bcrypt.hashSync(bcrypt, bcrypt.genSaltSync(6));
+        const hashPass = await bcrypt.hashSync(password, bcrypt.genSaltSync(6));
         const emailLink = uuid.v4();
         const user = await UserModel.create({ 
             email: email,
             password: hashPass,
             emailLink: emailLink
         });
+
+        await MainServ.sendActivationEmail({ email, emailLink });
+        
+        const UserDto = new UserDTO(user);
+        const tokens = TokenServ.generate({...UserDto});
+        await TokenServ.save(UserDto.id, tokens.refToken);
+
+        return {
+            ...tokens,
+            user: UserDto
+        }
     }
 }
 
