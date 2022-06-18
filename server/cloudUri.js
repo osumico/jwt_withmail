@@ -16,7 +16,7 @@ class URICreator {
     }
 
     getURI() {
-        let uri = `${this.type}://${this.data.log}:${this.data.pass}@${this.url}/?`;
+        let uri = `${ this.type }://${ this.data.log }:${ this.data.pass }@${ this.url }/?`;
         const args = this.args.join("&");
         return uri + args;
     }
