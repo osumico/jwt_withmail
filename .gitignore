@@ -1,6 +1,6 @@
 server/node_modules
 client/node_modules
-
+server/config
 
 client/.pnp
 client/.pnp.js
@@ -18,4 +18,3 @@ client/yarn-debug.log*
 client/yarn-error.log*
 
 
-server/config/default.json
