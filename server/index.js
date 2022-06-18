@@ -4,6 +4,7 @@ const cookieParser = require("cookie-parser");
 const config = require("config");
 const mongoose = require("mongoose");
 const URICreator = require("./cloudUri");
+const router = require("./router/index");
 
 const app = express();
 const port = config.get("port") || 3000;
@@ -20,6 +21,7 @@ const mongoURI = new URICreator(type, login, pass, url, params).getURI();
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors());
+app.use("/api", router);
 
 const start = async () => {
     try {
