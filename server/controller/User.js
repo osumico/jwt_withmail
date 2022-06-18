@@ -31,6 +31,16 @@ class User {
     }
 
 
+    async activate(req, res, next) {
+        try {
+            res.json("activate");
+
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+
     async refreshToken(req, res, next) {
         try {
             res.json("ref");
