@@ -7,6 +7,8 @@ const UserDTO = require("../dtos/User");
 const config = require("config");
 
 class User {
+
+
     async registration(email, password) {
         const candidate = await UserModel.findOne({ email });
         if (candidate) {
@@ -26,13 +28,26 @@ class User {
         await MainServ.sendActivationEmail(email, doneLink);
         
         const UserDto = new UserDTO(user);
-        const tokens = TokenServ.generate({...UserDto});
+        const tokens = TokenServ.generate({ ...UserDto });
         await TokenServ.save(UserDto.id, tokens.refToken);
 
         return {
             ...tokens,
             user: UserDto
         }
+    }
+
+
+    async activate(emailLink) {
+        const user = await UserModel.findOne({ emailLink });
+        if (!user) {
+            throw new Error("Uncorrect activate link")
+        }
+
+        user.isActive = true;
+        await user.save();
+
+
     }
 }
 

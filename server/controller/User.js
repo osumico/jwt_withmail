@@ -40,7 +40,6 @@ class User {
             });
             return res.json(data);
 
-
         } catch (e) {
             console.error(e);
         }
@@ -69,7 +68,11 @@ class User {
 
     async activate(req, res, next) {
         try {
-            res.json("activate");
+            const emailLink = req.params.link;
+            await UserSrv.activate(emailLink);
+
+            const clientURL = `http://${ config.get("domain") }:${ config.get("clientPort") }`;
+            return res.redirect(clientURL);
 
         } catch (e) {
             console.error(e);
