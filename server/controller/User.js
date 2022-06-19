@@ -1,6 +1,7 @@
 const UserSrv = require("../service/User");
 const config = require("config");
-
+const { validationResult } = require("express-validator");
+const APIError = require("../exceptions/APIError");
 
 function stringToMsJWT(string) {
     const ints = string.slice(0, 2);
@@ -32,6 +33,12 @@ class User {
 
     async register(req, res, next) {
         try {
+
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return next(APIError.BadRequest("Validation error", errors.array()))
+            }
+
             const { email, password } = req.body;
             const data = await UserSrv.registration(email, password);
 
@@ -49,7 +56,13 @@ class User {
 
     async login(req, res, next) {
         try {
-            res.json("log");
+            const { email, password } = req.body;
+            const data = await UserSrv.login(email, password);
+            res.cookie('refToken', data.refToken, { 
+                maxAge: stringToMsJWT(config.get("refreshTTime")),
+                httpOnly: true
+            });
+            return res.json(data);
 
         } catch (e) {
             next(e);

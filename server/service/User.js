@@ -7,6 +7,14 @@ const UserDTO = require("../dtos/User");
 const config = require("config");
 const APIError = require("../exceptions/APIError");
 
+
+async function createDTO(UserDTO) {
+    const tokens = TokenServ.generate({ ...UserDTO });
+    await TokenServ.save(UserDTO.id, tokens.refToken);
+
+    return { ...tokens, user: UserDTO }
+}
+
 class User {
 
 
@@ -32,10 +40,7 @@ class User {
         const tokens = TokenServ.generate({ ...UserDto });
         await TokenServ.save(UserDto.id, tokens.refToken);
 
-        return {
-            ...tokens,
-            user: UserDto
-        }
+        return createDTO(new UserDTO(user));
     }
 
 
@@ -47,8 +52,23 @@ class User {
 
         user.isActive = true;
         await user.save();
+        console.log(`${user.email} -- is activated by link!`);
+    }
 
 
+    async login(email, password) {
+        const user = await UserModel.findOne({ email });
+        if (!user) {
+            throw APIError.BadRequest(`User with that email: ${ email } -- not found!`);
+        }
+
+        const isPassEq = await bcrypt.compare(password, user.password);
+        if (!isPassEq) {
+            throw APIError.BadRequest(`Password: ${ password } don't match at user ${ email }`); 
+        }
+
+        console.log(`${user.email} -- is login!`);
+        return createDTO(new UserDTO(user));
     }
 }
 
