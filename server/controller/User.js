@@ -28,6 +28,16 @@ function stringToMsJWT(string) {
   
     return ints * mult * 1000;
   }
+
+
+function cookieSet(res, data) {
+    res.cookie('refToken', data.refToken, { 
+        maxAge: stringToMsJWT(config.get("refreshTTime")),
+        httpOnly: true
+    });
+}
+
+
 class User {
 
 
@@ -41,11 +51,8 @@ class User {
 
             const { email, password } = req.body;
             const data = await UserSrv.registration(email, password);
+            cookieSet(res, data);
 
-            res.cookie('refToken', data.refToken, { 
-                maxAge: stringToMsJWT(config.get("refreshTTime")),
-                httpOnly: true
-            });
             return res.json(data);
 
         } catch (e) {
@@ -58,10 +65,8 @@ class User {
         try {
             const { email, password } = req.body;
             const data = await UserSrv.login(email, password);
-            res.cookie('refToken', data.refToken, { 
-                maxAge: stringToMsJWT(config.get("refreshTTime")),
-                httpOnly: true
-            });
+            cookieSet(res, data);
+
             return res.json(data);
 
         } catch (e) {
@@ -72,8 +77,12 @@ class User {
 
     async logout(req, res, next) {
         try {
-            res.json("logout");
+            const { refToken } = req.cookies;
+            const token = await UserSrv.logout(refToken);
+            res.clearCookie("refToken");
 
+            return res.json(token);
+            
         } catch (e) {
             next(e);
         }

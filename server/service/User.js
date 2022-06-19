@@ -15,6 +15,7 @@ async function createDTO(UserDTO) {
     return { ...tokens, user: UserDTO }
 }
 
+
 class User {
 
 
@@ -69,6 +70,11 @@ class User {
 
         console.log(`${user.email} -- is login!`);
         return createDTO(new UserDTO(user));
+    }
+
+    async logout(refToken) {
+        const token = await TokenServ.rmToken(refToken);
+        return token;
     }
 }
 

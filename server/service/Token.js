@@ -30,6 +30,12 @@ class Token {
         const token = await TokenModel.create({ user: id, refresh: refToken });
         return token;
     }
+
+
+    async rmToken(refToken) {
+        const data = await TokenModel.deleteOne({ refToken });
+        return data;
+    }
 }
 
 module.exports = new Token();
