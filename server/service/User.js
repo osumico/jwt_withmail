@@ -74,7 +74,26 @@ class User {
 
     async logout(refToken) {
         const token = await TokenServ.rmToken(refToken);
+        console.log(`User with token: ${refToken} -- is logout.`);
+
         return token;
+    }
+
+    async refresh(refToken) {
+        if(!refToken) {
+            throw APIError.AuthError();
+        }
+
+        const data = TokenServ.validToken(refToken, config.get("skeyRefresh"));
+        const token = await TokenServ.findToken(refToken);
+
+        if (!data || !token) {
+            throw APIError.AuthError();
+        }
+
+        const user = await UserModel.findById(data.id)
+        console.log(`\nUser ${ user.email } is refresh JWToken\nToken: ${ token.refresh }`);
+        return createDTO(new UserDTO(user));
     }
 }
 

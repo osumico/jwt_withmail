@@ -20,6 +20,18 @@ class Token {
 
     }
 
+
+    validToken(token, skey) {
+        try  {
+            const data = jwt.verify(token, skey) // like config.get("skeyAccess")
+            return data;
+
+        } catch (e) {
+            return null;
+        }
+    }
+
+
     async save(id, refToken) {
         const tokenData = await TokenModel.findOne({ user: id });
         if (tokenData) {
@@ -34,6 +46,12 @@ class Token {
 
     async rmToken(refToken) {
         const data = await TokenModel.deleteOne({ refToken });
+        return data;
+    }
+
+
+    async findToken(refToken) {
+        const data = await TokenModel.findOne({ refToken });
         return data;
     }
 }

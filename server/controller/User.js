@@ -38,6 +38,15 @@ function cookieSet(res, data) {
 }
 
 
+async function genToken(res, UserSrv) {
+    const data = await UserSrv;
+    cookieSet(res, data);
+
+    return res.json(data);
+}
+
+
+
 class User {
 
 
@@ -64,10 +73,7 @@ class User {
     async login(req, res, next) {
         try {
             const { email, password } = req.body;
-            const data = await UserSrv.login(email, password);
-            cookieSet(res, data);
-
-            return res.json(data);
+            return genToken(res, UserSrv.login(email, password));
 
         } catch (e) {
             next(e);
@@ -82,7 +88,7 @@ class User {
             res.clearCookie("refToken");
 
             return res.json(token);
-            
+
         } catch (e) {
             next(e);
         }
@@ -105,7 +111,8 @@ class User {
 
     async refreshToken(req, res, next) {
         try {
-            res.json("ref");
+            const { refToken } = req.cookies;
+            return genToken(res, UserSrv.refresh(refToken));
 
         } catch (e) {
             next(e);
