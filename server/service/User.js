@@ -81,19 +81,24 @@ class User {
 
     async refresh(refToken) {
         if(!refToken) {
-            throw APIError.AuthError();
+            return APIError.AuthError();
         }
 
         const data = TokenServ.validToken(refToken, config.get("skeyRefresh"));
         const token = await TokenServ.findToken(refToken);
 
         if (!data || !token) {
-            throw APIError.AuthError();
+            return APIError.AuthError();
         }
 
         const user = await UserModel.findById(data.id)
         console.log(`\nUser ${ user.email } is refresh JWToken\nToken: ${ token.refresh }`);
         return createDTO(new UserDTO(user));
+    }
+
+    async getAllUsers() {
+        const users = await UserModel.find();
+        return users;
     }
 }
 

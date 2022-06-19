@@ -122,7 +122,8 @@ class User {
 
     async getUsers(req, res, next) {
         try {
-            res.json("users");
+            const users = await UserSrv.getAllUsers();
+            return res.json(users);
 
         } catch (e) {
             next(e);
