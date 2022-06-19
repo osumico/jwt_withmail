@@ -5,6 +5,7 @@ const MainServ = require("./Mail");
 const TokenServ = require("./Token");
 const UserDTO = require("../dtos/User");
 const config = require("config");
+const APIError = require("../exceptions/APIError");
 
 class User {
 
@@ -12,7 +13,7 @@ class User {
     async registration(email, password) {
         const candidate = await UserModel.findOne({ email });
         if (candidate) {
-            throw new Error(`User with ${ email } -- is exist!`);
+            throw APIError.BadRequest(`User with ${ email } -- is exist!`);
         }
 
         const hashPass = await bcrypt.hashSync(password, bcrypt.genSaltSync(6));
@@ -41,7 +42,7 @@ class User {
     async activate(emailLink) {
         const user = await UserModel.findOne({ emailLink });
         if (!user) {
-            throw new Error("Uncorrect activate link")
+            throw APIError.BadRequest("Uncorrect activate link")
         }
 
         user.isActive = true;

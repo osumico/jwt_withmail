@@ -1,6 +1,7 @@
 const UserSrv = require("../service/User");
 const config = require("config");
 
+
 function stringToMsJWT(string) {
     const ints = string.slice(0, 2);
     const multStr = string.slice(2, 3);
@@ -41,7 +42,7 @@ class User {
             return res.json(data);
 
         } catch (e) {
-            console.error(e);
+            next(e);
         }
     }
 
@@ -51,7 +52,7 @@ class User {
             res.json("log");
 
         } catch (e) {
-            console.error(e);
+            next(e);
         }
     }
 
@@ -61,7 +62,7 @@ class User {
             res.json("logout");
 
         } catch (e) {
-            console.error(e);
+            next(e);
         }
     }
 
@@ -75,7 +76,7 @@ class User {
             return res.redirect(clientURL);
 
         } catch (e) {
-            console.error(e);
+            next(e);
         }
     }
 
@@ -85,7 +86,7 @@ class User {
             res.json("ref");
 
         } catch (e) {
-            console.error(e);
+            next(e);
         }
     }
 
@@ -95,7 +96,7 @@ class User {
             res.json("users");
 
         } catch (e) {
-            console.error(e);
+            next(e);
         }
     }
 }
