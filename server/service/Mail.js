@@ -35,19 +35,9 @@ class Mail {
     async sendActivationEmail(toEmail, link) {
 
         const IMAPData = this.IMAPData;
-        await this.trasporter.sendMail({ 
-            from: IMAPData.username,
-            to: toEmail,
-            subject: `Account activation ${ config.get("domain") }`,
-            text: "",
-            html: 
-`
-                <div>
-                    <h1>For activation please refer to link bellow!</h1>
-                    <a href="${link}">${link}</a>
-                </div>
-`       
-        });
+        console.log(`Simulating send activation link for ${ config.get("domain") }:${ config.get("port") }`);
+        console.log(`To ${ toEmail }\nFrom: ${ IMAPData.username }\nLinks:`);
+        console.log(`${ link }`);
     }
 }
 

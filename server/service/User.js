@@ -21,8 +21,9 @@ class User {
             emailLink: emailLink
         });
 
-        const doneLink = `http://${config.get("domain")}:${config.get("port")}/api/activate/${emailLink}`;
-        await MainServ.sendActivationEmail({ email, doneLink});
+
+        const doneLink = `http://${ config.get("domain") }:${ config.get("port") }/api/activate/${ emailLink }`;
+        await MainServ.sendActivationEmail(email, doneLink);
         
         const UserDto = new UserDTO(user);
         const tokens = TokenServ.generate({...UserDto});
