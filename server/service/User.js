@@ -4,7 +4,7 @@ const uuid = require("uuid");
 const MainServ = require("./Mail");
 const TokenServ = require("./Token");
 const UserDTO = require("../dtos/User");
-
+const config = require("config");
 
 class User {
     async registration(email, password) {
@@ -21,7 +21,8 @@ class User {
             emailLink: emailLink
         });
 
-        await MainServ.sendActivationEmail({ email, emailLink });
+        const doneLink = `http://${config.get("domain")}:${config.get("port")}/api/activate/${emailLink}`;
+        await MainServ.sendActivationEmail({ email, doneLink});
         
         const UserDto = new UserDTO(user);
         const tokens = TokenServ.generate({...UserDto});

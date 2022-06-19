@@ -29,7 +29,7 @@ const start = async () => {
             useUnifiedTopology: true
         });
         app.listen(port, callback => {
-            console.log(`APP run at: localhost:${ port }`);
+            console.log(`APP run at: ${ config.get("domain") }:${ port }`);
         })
 
     } catch (e) {
